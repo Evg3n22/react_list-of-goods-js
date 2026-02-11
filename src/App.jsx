@@ -38,10 +38,6 @@ function sortGoods(goods, sortField) {
       });
       break;
 
-    case SORT_FIELD_REVERSE:
-      result.reverse();
-      break;
-
     case SORT_FIELD_RESET:
     default:
       return [...goodsFromServer];
@@ -53,6 +49,7 @@ function sortGoods(goods, sortField) {
 export const App = () => {
   const [sortField, setSortField] = useState(SORT_FIELD_RESET);
   const [visibleGoods, setVisibleGoods] = useState([...goodsFromServer]);
+  const [isReverse, setIsReverse] = useState(false);
 
   return (
     <div className="section content">
@@ -65,7 +62,7 @@ export const App = () => {
           onClick={() => {
             setSortField(SORT_FIELD_ALPHABETICALLY);
             setVisibleGoods(
-              sortGoods([...visibleGoods], SORT_FIELD_ALPHABETICALLY),
+              sortGoods([...goodsFromServer], SORT_FIELD_ALPHABETICALLY),
             );
           }}
         >
@@ -79,7 +76,9 @@ export const App = () => {
           })}
           onClick={() => {
             setSortField(SORT_FIELD_BY_LENGTH);
-            setVisibleGoods(sortGoods([...visibleGoods], SORT_FIELD_BY_LENGTH));
+            setVisibleGoods(
+              sortGoods([...goodsFromServer], SORT_FIELD_BY_LENGTH),
+            );
           }}
         >
           Sort by length
@@ -88,11 +87,12 @@ export const App = () => {
         <button
           type="button"
           className={cn('button is-info', {
-            'is-light': sortField !== SORT_FIELD_REVERSE,
+            'is-light': !isReverse || sortField !== SORT_FIELD_REVERSE,
           })}
           onClick={() => {
             setSortField(SORT_FIELD_REVERSE);
             setVisibleGoods(prev => [...prev].reverse());
+            setIsReverse(prev => !prev);
           }}
         >
           Reverse
