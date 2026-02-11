@@ -22,8 +22,8 @@ const SORT_FIELD_BY_LENGTH = 'length';
 const SORT_FIELD_REVERSE = 'reverse';
 const SORT_FIELD_RESET = 'reset';
 
-function sortGoods(goods, sortField) {
-  const result = [...goods];
+function sortGoods(goods, sortField, isReverse = false) {
+  let result = [...goods];
 
   switch (sortField) {
     case SORT_FIELD_ALPHABETICALLY:
@@ -40,7 +40,11 @@ function sortGoods(goods, sortField) {
 
     case SORT_FIELD_RESET:
     default:
-      return [...goodsFromServer];
+      result = [...goodsFromServer];
+  }
+
+  if (isReverse) {
+    return result.reverse();
   }
 
   return result;
@@ -87,18 +91,17 @@ export const App = () => {
         <button
           type="button"
           className={cn('button is-info', {
-            'is-light': !isReverse || sortField !== SORT_FIELD_REVERSE,
+            'is-light': !isReverse,
           })}
           onClick={() => {
-            setSortField(SORT_FIELD_REVERSE);
-            setVisibleGoods(prev => [...prev].reverse());
             setIsReverse(prev => !prev);
+            setVisibleGoods(prev => [...prev].reverse());
           }}
         >
           Reverse
         </button>
 
-        {SORT_FIELD_RESET !== sortField && (
+        {JSON.stringify(visibleGoods) !== JSON.stringify(goodsFromServer) && (
           <button
             type="button"
             className="button is-info is-light"
